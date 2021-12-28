@@ -1,4 +1,7 @@
 {
   "version": 2,
-  "projects": {}
+  "projects": {
+    "router": "libs/router",
+    "util-standalone-shim": "libs/util-standalone-shim"
+  }
 }

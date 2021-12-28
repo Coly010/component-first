@@ -1,0 +1,23 @@
+{
+  "root": "libs/util-standalone-shim",
+  "sourceRoot": "libs/util-standalone-shim/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/util-standalone-shim/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/util-standalone-shim"],
+      "options": {
+        "jestConfig": "libs/util-standalone-shim/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
