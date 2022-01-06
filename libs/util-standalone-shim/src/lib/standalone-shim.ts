@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import {
   Component as NgComponent,
   Directive as NgDirective,
@@ -127,8 +125,8 @@ export function bootstrapComponent<T>(
   platformModule = BrowserModule
 ) {
   @NgModule({
-    imports: [platformModule as any, componetClazz['module'] as any],
-    bootstrap: [componetClazz as any],
+    imports: [platformModule, componetClazz['module']],
+    bootstrap: [componetClazz],
   })
   class VirtualBootstrapNgModule {}
 
