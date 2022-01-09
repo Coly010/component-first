@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Input } from '@angular/core';
 
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { Component } from '@component-first/util-standalone-shim';
 
 @Component({
@@ -18,8 +19,11 @@ export class RouteComponent {
 
   canRender = false;
 
-  toggleRoute() {
-    this.canRender = !this.canRender;
-    console.log('something happenign?');
+  toggleRoute(override?: boolean) {
+    if (override !== undefined) {
+      this.canRender = override;
+    } else {
+      this.canRender = !this.canRender;
+    }
   }
 }

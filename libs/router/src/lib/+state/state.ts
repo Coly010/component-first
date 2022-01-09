@@ -7,9 +7,15 @@ export const routerState$ = new BehaviorSubject<RouterState | undefined>(
   undefined
 );
 
-export function createInitialRouterState(routes: Route[] = []) {
+export function createInitialRouterState(
+  currentPath: string = '',
+  routes: Route[] = []
+) {
   CURRENT_ROUTER_STATE = {
-    activeRoute: routes.find((r) => r.path === '') ?? { path: '' },
+    activeRoute: routes.find((r) => r.path === currentPath) ?? {
+      path: '',
+      routeComponent: undefined,
+    },
     routes,
   };
 
@@ -36,6 +42,7 @@ export function registerRoute(route: Route) {
 
 export function findRoute(url: string) {
   const route = CURRENT_ROUTER_STATE.routes.find((r) => r.path === url);
+  console.log(url, route?.path);
   if (!route) {
     throw new Error('Could not find route matching ' + url);
   }
@@ -63,4 +70,20 @@ export function goTo(url: string) {
 
 function pushStateChanges() {
   routerState$.next(CURRENT_ROUTER_STATE);
+}
+
+export function setInitialRoute(url: string) {
+  url = url.startsWith('/') ? url.slice(1) : url;
+  const pathFragments = url.split('/');
+  console.log(pathFragments, url);
+  const goToEachFragment = (urlToGoTo: string, fragments: string[]) => {
+    goTo(urlToGoTo);
+    if (fragments.length === 0) {
+      return;
+    } else {
+      goToEachFragment(`${urlToGoTo}/${fragments.shift()}`, fragments);
+    }
+  };
+
+  goToEachFragment(pathFragments.shift() as string, pathFragments);
 }

@@ -1,6 +1,7 @@
 import { CommonModule, Location } from '@angular/common';
 import {
   AfterContentChecked,
+  AfterViewInit,
   ChangeDetectorRef,
   ContentChildren,
   OnInit,
@@ -9,15 +10,21 @@ import {
   SkipSelf,
 } from '@angular/core';
 
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { Component } from '@component-first/util-standalone-shim';
-import { tap } from 'rxjs';
+import { tap } from 'rxjs/operators';
+
 import {
   createInitialRouterState,
+  findRoute,
   registerRoute,
   Route,
   routerState$,
+  setActiveRoute,
+  setInitialRoute,
 } from '../+state';
 import { RouteComponent } from '../route/route.component';
+import { RouterService } from '../router.service';
 
 @Component({
   standalone: true,
@@ -25,10 +32,11 @@ import { RouteComponent } from '../route/route.component';
   selector: 'router',
   imports: [CommonModule],
   template: `<ng-content></ng-content>
-    <div>{{ routesAdded | json }}</div>
-    <div>{{ routerState$ | async | json }}</div>`,
+    <div>{{ routesAdded | json }}</div>`,
 })
-export class RouterComponent implements OnInit, AfterContentChecked {
+export class RouterComponent
+  implements OnInit, AfterViewInit, AfterContentChecked
+{
   @ContentChildren(RouteComponent) routes: QueryList<RouteComponent> =
     new QueryList();
 
@@ -38,6 +46,7 @@ export class RouterComponent implements OnInit, AfterContentChecked {
 
   constructor(
     @SkipSelf() @Optional() private parentRouter: RouterComponent,
+    private routerService: RouterService,
     private location: Location,
     private cdRef: ChangeDetectorRef
   ) {
@@ -48,35 +57,30 @@ export class RouterComponent implements OnInit, AfterContentChecked {
   }
 
   ngOnInit() {
-    this.routerState$
-      .pipe(
-        tap((state) => {
-          const activeRoute = state?.activeRoute.path;
-          this.routes.forEach((route) => {
-            if (route.path === activeRoute) {
-              if (!route.canRender) {
-                route.toggleRoute();
-              }
-            } else {
-              if (route.canRender) {
-                route.toggleRoute();
-              }
-            }
-          });
+    if (!this.parentRouter || this.parentRouter.stateCreated !== true) {
+      this.routerService.routerState$
+        .pipe(tap(() => this.cdRef.detectChanges()))
+        .subscribe();
+    }
+  }
 
-          this.cdRef.detectChanges();
-        })
-      )
-      .subscribe();
+  ngAfterViewInit() {
+    if (
+      (!this.parentRouter || this.parentRouter.stateCreated !== true) &&
+      this.location.path()
+    ) {
+      setInitialRoute(this.location.path());
+    }
   }
 
   ngAfterContentChecked() {
-    console.log('checking routes');
     this.routes.forEach((route) => {
       if (route.path && !this.routesAdded[route.path]) {
-        this.routesAdded[route.path] = true;
+        const path = route.path;
+        this.routesAdded[path] = true;
         const newRoute: Route = {
-          path: route.path,
+          path,
+          routeComponent: route,
         };
         registerRoute(newRoute);
       }
