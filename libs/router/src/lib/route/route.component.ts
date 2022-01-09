@@ -1,8 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Input } from '@angular/core';
+import {
+  ComponentFactoryResolver,
+  ElementRef,
+  Input,
+  Type,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { Component } from '@component-first/util-standalone-shim';
+import {
+  Component,
+  ViewContainerRefShim,
+} from '@component-first/util-standalone-shim';
 
 @Component({
   standalone: true,
@@ -10,20 +20,39 @@ import { Component } from '@component-first/util-standalone-shim';
   selector: 'route',
   imports: [CommonModule],
   template: `<ng-container *ngIf="canRender"
-    ><ng-content></ng-content
+    ><ng-content *ngIf="!component"></ng-content
   ></ng-container>`,
 })
 export class RouteComponent {
-  @Input() path: string | undefined;
-  @Input() component: any | undefined;
+  @Input() path!: string;
+  @Input() component: (() => Promise<Type<unknown>>) | undefined;
 
   canRender = false;
+  viewContainerRef: ViewContainerRefShim;
+
+  constructor(
+    private vcr: ViewContainerRef,
+    private cfr: ComponentFactoryResolver
+  ) {
+    this.viewContainerRef = new ViewContainerRefShim(this.vcr, this.cfr);
+  }
+
+  async loadComponent() {
+    console.log('here trying to loadComponent', this.component);
+    if (this.component && this.canRender) {
+      console.log('gonna fetch this');
+      this.viewContainerRef.createComponent(await this.component());
+    }
+  }
 
   toggleRoute(override?: boolean) {
     if (override !== undefined) {
       this.canRender = override;
     } else {
       this.canRender = !this.canRender;
+    }
+    if (this.component) {
+      this.loadComponent();
     }
   }
 }
