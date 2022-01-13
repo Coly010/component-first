@@ -1,9 +1,5 @@
 import { ChangeDetectorRef } from '@angular/core';
-
-interface Action<T> {
-  name: string;
-  payload?: T;
-}
+import { Action, SelectorResult } from '../types';
 
 export class Store<T> {
   private state!: T;
@@ -23,15 +19,22 @@ export class Store<T> {
     return this.state;
   }
 
+  select<R>(selector: (state: T) => R): SelectorResult<R | null> {
+    return () => (this.state ? selector(this.state) : null);
+  }
+
   createAction<P extends object>(name: string) {
-    return { name, payload: {} as P } as Action<P>;
+    return { name } as Action<P>;
   }
 
   createEffect<P>(action: Action<P>, effectHandler: () => void) {}
 
-  createReducer<P>(
+  createReducer<P, R extends T>(
     action: Action<P>,
-    reducer: (state: T, actionPayload: P) => T
+    reducer: (
+      state: T,
+      actionPayload: P
+    ) => R extends T ? (T extends R ? R : never) : never
   ) {
     if (!(action.name in this.reducers)) {
       this.reducers[action.name] = [];
@@ -42,6 +45,7 @@ export class Store<T> {
 
   dispatchAction<P>(action: Action<P>, payload?: P) {
     this.handleAction(action, payload);
+    console.log(this.state);
   }
 
   private handleAction<P>(action: Action<P>, payload?: P) {
@@ -52,5 +56,6 @@ export class Store<T> {
     }
 
     this.state = virtualState;
+    this.cd.markForCheck();
   }
 }

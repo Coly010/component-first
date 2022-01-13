@@ -1,5 +1,5 @@
 import { Store } from './store';
-import { getPrivateProperty } from './utils/testing';
+import { getPrivateProperty } from '../utils/testing';
 
 describe('Store', () => {
   describe('Reducers', () => {
