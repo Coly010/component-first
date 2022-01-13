@@ -69,7 +69,6 @@ export class AppComponent implements OnInit {
       this.store.dispatchAction(this.store.actions.updateTitle, {
         title: 'Welcome to Component-First',
       });
-      console.log('changed');
     }, 3500);
   }
 }

@@ -15,10 +15,6 @@ export class AppStore extends Store<AppState> {
     title: this.select((state) => state.title),
   };
 
-  constructor() {
-    super();
-  }
-
   create(cd: ChangeDetectorRef) {
     this.init(cd, { title: 'Hello World' });
 
@@ -26,5 +22,9 @@ export class AppStore extends Store<AppState> {
       ...state,
       title,
     }));
+
+    this.createEffect(this.actions.updateTitle, () => {
+      console.log("We'll try update the title");
+    });
   }
 }

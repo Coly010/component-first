@@ -7,7 +7,10 @@ export class Store<T> {
     string,
     Array<(state: T, actionPayload?: any) => T>
   > = {};
-  private effects: Record<string, () => void> = {};
+  private effects: Record<
+    string,
+    Array<(state: T, actionPayload?: any) => void>
+  > = {};
   private cd!: ChangeDetectorRef;
 
   init(cd: ChangeDetectorRef, state: T) {
@@ -27,7 +30,13 @@ export class Store<T> {
     return { name } as Action<P>;
   }
 
-  createEffect<P>(action: Action<P>, effectHandler: () => void) {}
+  createEffect<P>(action: Action<P>, effect: (state: T, payload: P) => void) {
+    if (!(action.name in this.createEffect)) {
+      this.effects[action.name] = [];
+    }
+
+    this.effects[action.name] = [...this.effects[action.name], effect];
+  }
 
   createReducer<P, R extends T>(
     action: Action<P>,
@@ -45,7 +54,6 @@ export class Store<T> {
 
   dispatchAction<P>(action: Action<P>, payload?: P) {
     this.handleAction(action, payload);
-    console.log(this.state);
   }
 
   private handleAction<P>(action: Action<P>, payload?: P) {
@@ -53,6 +61,11 @@ export class Store<T> {
     const reducers = this.reducers[action.name];
     for (const reducer of reducers) {
       virtualState = reducer(virtualState, payload);
+    }
+
+    const effects = this.effects[action.name];
+    for (const effect of effects) {
+      effect(virtualState, payload);
     }
 
     this.state = virtualState;
