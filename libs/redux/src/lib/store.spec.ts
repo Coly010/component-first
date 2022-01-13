@@ -1,22 +1,24 @@
 import { Store } from './store';
+import { getPrivateProperty } from './utils/testing';
 
 describe('Store', () => {
   describe('Reducers', () => {
     it('should create reducer correctly', () => {
       // ARRANGE
       const store = new Store<{ data: string }>();
-      const actionName = 'Action1';
+      const action = store.createAction('action1');
 
       // ACT
-      store.createReducer(actionName, (state) => ({
+      store.createReducer(action, (state) => ({
         ...state,
         data: 'MyData',
       }));
 
       // ASSERT
-      expect(actionName in store.reducers).toBeTruthy();
-      expect(store.reducers[actionName]).toHaveLength(1);
-      expect(store.reducers[actionName][0]({ data: '' })).toEqual({
+      const reducers = getPrivateProperty(store, 'reducers');
+      expect(action.name in reducers).toBeTruthy();
+      expect(reducers[action.name]).toHaveLength(1);
+      expect(reducers[action.name][0]({ data: '' })).toEqual({
         data: 'MyData',
       });
     });
@@ -24,19 +26,20 @@ describe('Store', () => {
     it('should create reducer that allows a payload', () => {
       // ARRANGE
       const store = new Store<{ data: string }>();
-      const actionName = 'Action1';
+      const action = store.createAction<{ value: string }>('action1');
 
       // ACT
-      store.createReducer(actionName, (state, payload) => ({
+      store.createReducer(action, (state, payload) => ({
         ...state,
         data: payload.value,
       }));
 
       // ASSERT
-      expect(actionName in store.reducers).toBeTruthy();
-      expect(store.reducers[actionName]).toHaveLength(1);
+      const reducers = getPrivateProperty(store, 'reducers');
+      expect(action.name in reducers).toBeTruthy();
+      expect(reducers[action.name]).toHaveLength(1);
       expect(
-        store.reducers[actionName][0]({ data: '' }, { value: 'MyData' })
+        reducers[action.name][0]({ data: '' }, { value: 'MyData' })
       ).toEqual({
         data: 'MyData',
       });
@@ -47,28 +50,28 @@ describe('Store', () => {
     it('should reduce state correctly when an action is dispatched', () => {
       // ARRANGE
       const store = new Store<{ a: string; b: string; c: number }>();
-      store.state = {
+      store['state'] = {
         a: '',
         b: '',
         c: 0,
       };
-      const actionName = 'Action1';
-      const actionName2 = 'Action2';
+      const action = store.createAction<{ value: string }>('Action1');
+      const action2 = store.createAction<{ value: string }>('Action2');
 
-      store.createReducer(actionName, (state, payload) => ({
+      store.createReducer(action, (state, payload) => ({
         ...state,
         a: payload.value,
       }));
-      store.createReducer(actionName2, (state, payload) => ({
+      store.createReducer(action2, (state, { value }) => ({
         ...state,
-        b: payload.value,
+        b: value,
       }));
 
       // ACT
-      store.dispatchAction(actionName2, { value: 'ten' });
+      store.dispatchAction(action2, { value: 'ten' });
 
       // ASSERT
-      expect(store.state).toEqual({
+      expect(store.get()).toEqual({
         a: '',
         b: 'ten',
         c: 0,
