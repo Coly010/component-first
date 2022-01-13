@@ -40,7 +40,6 @@ class LatestPipe implements PipeTransform {
     ProductRouteEntryComponent,
     LatestPipe,
   ],
-  providers: [AppStore],
   template: `
     <h1>{{ title | latest }}</h1>
     <router>
@@ -54,6 +53,7 @@ class LatestPipe implements PipeTransform {
     <button href2="about">Go About</button>
     <button href2="product/list">Go Products</button>
   `,
+  providers: [AppStore],
 })
 export class AppComponent implements OnInit {
   title: SelectorResult<string>;
