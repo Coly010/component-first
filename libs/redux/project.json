@@ -1,0 +1,42 @@
+{
+  "projectType": "library",
+  "root": "libs/redux",
+  "sourceRoot": "libs/redux/src",
+  "prefix": "component-first",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "outputs": ["dist/libs/redux"],
+      "options": {
+        "project": "libs/redux/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/redux/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/redux/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/redux"],
+      "options": {
+        "jestConfig": "libs/redux/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/redux/src/**/*.ts",
+          "libs/redux/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

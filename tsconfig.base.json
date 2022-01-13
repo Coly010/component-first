@@ -18,6 +18,7 @@
       "@component-first/example-app/product": [
         "libs/example-app/product/src/index.ts"
       ],
+      "@component-first/redux": ["libs/redux/src/index.ts"],
       "@component-first/router": ["libs/router/src/index.ts"],
       "@component-first/util-standalone-shim": [
         "libs/util-standalone-shim/src/index.ts"

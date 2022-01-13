@@ -4,6 +4,7 @@
     "example-app": "apps/example-app",
     "example-app-e2e": "apps/example-app-e2e",
     "example-app-product": "libs/example-app/product",
+    "redux": "libs/redux",
     "router": "libs/router",
     "util-standalone-shim": "libs/util-standalone-shim"
   }
