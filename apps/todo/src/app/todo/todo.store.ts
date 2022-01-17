@@ -78,7 +78,6 @@ export class TodoStore extends Store<TodoState> implements OnDestroy {
       });
 
     this.dispatchAction(this.actions.loadTodo);
-
   }
 
   #createEffects() {
