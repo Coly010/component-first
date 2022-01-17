@@ -31,7 +31,7 @@ export class Store<T> {
   }
 
   createEffect<P>(action: Action<P>, effect: (state: T, payload: P) => void) {
-    if (!(action.name in this.createEffect)) {
+    if (!(action.name in this.effects)) {
       this.effects[action.name] = [];
     }
 
@@ -58,14 +58,18 @@ export class Store<T> {
 
   private handleAction<P>(action: Action<P>, payload?: P) {
     let virtualState = { ...this.state };
-    const reducers = this.reducers[action.name];
-    for (const reducer of reducers) {
-      virtualState = reducer(virtualState, payload);
+    if (action.name in this.reducers) {
+      const reducers = this.reducers[action.name];
+      for (const reducer of reducers) {
+        virtualState = reducer(virtualState, payload);
+      }
     }
 
-    const effects = this.effects[action.name];
-    for (const effect of effects) {
-      effect(virtualState, payload);
+    if (action.name in this.effects) {
+      const effects = this.effects[action.name];
+      for (const effect of effects) {
+        effect(virtualState, payload);
+      }
     }
 
     this.state = virtualState;

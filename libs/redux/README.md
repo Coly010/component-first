@@ -10,7 +10,9 @@ A state management solution that implements the Redux pattern.
 
 See basic examples below on usage:
 
-1. Create an accompanying `component.store.ts` file containing your actions, reducers and effects:
+1. `npm install @component-first/redux`
+
+2. Create an accompanying `component.store.ts` file containing your actions, reducers and effects:
 
 ```ts
 import { ChangeDetectorRef, Injectable } from '@angular/core';
@@ -45,7 +47,7 @@ export class AppStore extends Store<AppState> {
 }
 ```
 
-2. Provide it to your Component and inject it in your `constructor` to use it:
+3. Provide it to your Component and inject it in your `constructor` to use it:
 
 ```ts
 export class AppComponent implements OnInit {
@@ -67,7 +69,7 @@ export class AppComponent implements OnInit {
 }
 ```
 
-3. Use the `latest` pipe in our `template` to always ensure we have the latest value from the store rendered, even in `OnPush` components (without sacrificing performance)
+4. Use the `latest` pipe in our `template` to always ensure we have the latest value from the store rendered, even in `OnPush` components (without sacrificing performance)
 
 ```html
 <h1>{{title | latest}}</h1>
