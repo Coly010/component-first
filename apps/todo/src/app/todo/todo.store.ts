@@ -58,7 +58,7 @@ export class TodoStore extends Store<TodoState> implements OnDestroy {
     super();
   }
 
-  initialize(cdr: ChangeDetectorRef) {
+  create(cdr: ChangeDetectorRef) {
     this.init(cdr, { todos: [], loading: false, filter: 'SHOW_ALL' });
 
     this.#createReducers();

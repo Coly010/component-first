@@ -52,7 +52,7 @@ export class TodoReduxComponent implements OnInit {
   constructor(private cdr: ChangeDetectorRef, public todoStore: TodoStore) {}
 
   ngOnInit() {
-    this.todoStore.initialize(this.cdr);
+    this.todoStore.create(this.cdr);
   }
 
   onAddTodo(newTodo: string) {
