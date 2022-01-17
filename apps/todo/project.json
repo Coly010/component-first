@@ -1,0 +1,79 @@
+{
+  "projectType": "application",
+  "root": "apps/todo",
+  "sourceRoot": "apps/todo/src",
+  "prefix": "app",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/todo",
+        "index": "apps/todo/src/index.html",
+        "main": "apps/todo/src/main.ts",
+        "polyfills": "apps/todo/src/polyfills.ts",
+        "tsConfig": "apps/todo/tsconfig.app.json",
+        "assets": ["apps/todo/src/favicon.ico", "apps/todo/src/assets"],
+        "styles": ["apps/todo/src/styles.css"],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/todo/src/environments/environment.ts",
+              "with": "apps/todo/src/environments/environment.prod.ts"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "browserTarget": "todo:build:production"
+        },
+        "development": {
+          "browserTarget": "todo:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "todo:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/todo/src/**/*.ts", "apps/todo/src/**/*.html"]
+      }
+    }
+  },
+  "tags": []
+}
